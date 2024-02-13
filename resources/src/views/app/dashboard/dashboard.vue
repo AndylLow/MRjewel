@@ -60,6 +60,23 @@
         </router-link>
       </b-col>
 
+      <b-col lg="12" md="15" sm="24">
+        
+          <b-card class="o-hidden mb-30 text-left">
+            
+            <div class="content">
+              <p class="text-primary text-24 line-height-1 mb-2 text-center">Döviz Kurları</p>
+              <p class="text-muted mt-2 mb-0" style="font-weight: bold; font-size: large;">USD/TRY<div id="exchangeRate" style="font-size: medium;"></div></p>
+              <p class="text-muted mt-2 mb-0" style="font-weight: bold; font-size: large;">EUR/USD<div id="exchangeRate2" style="font-size: medium;"></div></p>
+              <p class="text-muted mt-2 mb-0" style="font-weight: bold; font-size: large;">EUR/TRY<div id="exchangeRate3" style="font-size: medium;"></div></p>
+              <p class="text-muted mt-2 mb-0" style="font-weight: bold; font-size: large;">XAU/USD</p>
+              <p class="text-muted mt-2 mb-0" style="font-weight: bold; font-size: large;">XAG/USD</p>
+
+            
+            </div>
+          </b-card>
+      </b-col>
+
     </b-row>
 
     <b-row>
@@ -214,6 +231,46 @@ import "echarts/lib/chart/bar";
 import "echarts/lib/chart/line";
 import "echarts/lib/component/tooltip";
 import "echarts/lib/component/legend";
+
+// API'dan döviz kuru verilerini çekmek için bir fonksiyon
+function getExchangeRates() {
+  Promise.all([
+    fetch('https://api.exchangerate-api.com/v4/latest/USD').then(response => response.json()),
+    fetch('https://api.exchangerate-api.com/v4/latest/EUR').then(response => response.json())
+  ])
+  .then(data => {
+    const usdData = data[0];
+    const eurData = data[1];
+    
+    const usdRates = usdData.rates;
+    const eurRates = eurData.rates;
+
+    const tryRate = usdRates['TRY'];
+    const eurToTryRate = eurRates['TRY'];
+    const eurToUsdRate = eurRates['USD'];
+    
+    const exchangeRateElement = document.getElementById('exchangeRate');
+    exchangeRateElement.textContent = `1 USD = ${tryRate} TRY`; // USD fiyatı yazdır
+
+    const exchangeRateElement2 = document.getElementById('exchangeRate2');
+    exchangeRateElement2.textContent = `1 EUR = ${eurToTryRate} TRY`; // EUR fiyatını yazdır
+
+    const exchangeRateElement3 = document.getElementById('exchangeRate3');
+    exchangeRateElement3.textContent = `1 EUR = ${eurToUsdRate} USD`; // EUR fiyatını yazdır
+  })
+  .catch(error => {
+    console.error('Döviz kuru verileri alınamadı:', error);
+  });
+}
+
+window.onload = function() {
+  getExchangeRates();
+};
+
+// Sayfa yüklendiğinde döviz kuru verilerini çek
+window.onload = function() {
+  getExchangeRates();
+};
 
 export default {
   components: {

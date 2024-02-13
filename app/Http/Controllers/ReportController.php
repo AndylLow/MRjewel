@@ -576,7 +576,12 @@ class ReportController extends BaseController
                 ->where('sales.client_id', $client->id)
                 ->sum('payment_sales.montant');
 
-            $item['due'] = $item['total_amount'] - $item['total_paid'];
+             $item['total_shipping'] = DB::table('sales')
+                ->where('sales.deleted_at', '=', null)
+                ->where('sales.client_id', $client->id)
+                ->sum('shipping');
+#cumali düzenlendi
+            $item['due'] = $item['total_amount'] - ($item['total_paid'] + $item['total_shipping']);
             $item['name'] = $client->name;
             $item['phone'] = $client->phone;
             $item['code'] = $client->code;
@@ -604,14 +609,17 @@ class ReportController extends BaseController
 
         $data['total_amount'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)
             ->sum('GrandTotal');
-
+        
+        $data['total_shipping'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)
+            ->sum('shipping');
+#cumali düzenlendi
         $data['total_paid'] = DB::table('sales')
             ->where('sales.deleted_at', '=', null)
             ->join('payment_sales', 'sales.id', '=', 'payment_sales.sale_id')
             ->where('payment_sales.deleted_at', '=', null)
             ->where('sales.client_id', $client->id)->sum('payment_sales.montant');
 
-        $data['due'] = $data['total_amount'] - $data['total_paid'];
+        $data['due'] = $data['total_amount'] - ($data['total_paid'] + $data['total_shipping'] );
 
         return response()->json(['report' => $data]);
     }
@@ -704,6 +712,7 @@ class ReportController extends BaseController
             $item['paid_amount'] = $sale->paid_amount;
             $item['due'] = $sale->GrandTotal - $sale->paid_amount;
             $item['payment_status'] = $sale->payment_statut;
+            $item['shipping'] = $sale->shipping;
             $item['shipping_status'] = $sale->shipping_status;
             
             $data[] = $item;

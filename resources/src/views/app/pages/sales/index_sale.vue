@@ -642,8 +642,12 @@
                   <span>{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}} x {{formatNumber(detail_invoice.total/detail_invoice.quantity,2)}}</span>
                 </td>
                 <td style="text-align:right;vertical-align:bottom">{{formatNumber(detail_invoice.total,2)}}</td>
-              </tr>
-
+              </tr>      
+               <!--  Cumali eklendi
+              <tr style="margin-top:10px" v-show="pos_settings.shipping">
+                <td colspan="3" class="total">{{$t('Shipping')}}</td>
+                <td style="text-align:right;" class="total">{{invoice_pos.symbol}} {{formatNumber(invoice_pos.sale.shipping ,2)}}</td>
+              </tr>-->
 
               <tr style="margin-top:10px" v-show="pos_settings.show_discount">
                 <td colspan="3" class="total">{{$t('OrderTax')}}</td>
@@ -923,7 +927,13 @@ export default {
     }
   },
   methods: {
-
+    Sum_Total_due() {
+    	let sum = 0;
+      for (let i = 0; i < this.clients.length; i++) {
+        sum += this.clients[i].due;
+      }
+      this.Total_due = sum;
+    },
      async loadStripe_payment() {
       this.stripe = await loadStripe(`${this.stripe_key}`);
       const elements = this.stripe.elements();

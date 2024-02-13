@@ -314,7 +314,7 @@ export default {
         { title: "Amount", dataKey: "montant" }
       ];
       pdf.autoTable(columns, self.payments);
-      pdf.text("Payments Sales", 40, 25);
+      pdf.text("Ödeme", 40, 25);
       pdf.save("Payments_Sales.pdf");
     },
 

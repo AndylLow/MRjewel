@@ -38,6 +38,7 @@
         </b-card>
       </b-col>
       <b-col lg="3" md="6" sm="12">
+       
         <b-card class="card-icon-bg card-icon-bg-primary o-hidden mb-30 text-center">
           <i class="i-Money-Bag"></i>
           <div class="content">
@@ -82,7 +83,10 @@
                   <i class="i-File-Copy"></i> PDF
                 </b-button>
               </div>
+            
+                
                 <template slot="table-row" slot-scope="props">
+                  
                   <div v-if="props.column.field == 'statut'">
                     <span
                       v-if="props.row.statut == 'completed'"
@@ -94,6 +98,7 @@
                     >{{$t('Pending')}}</span>
                     <span v-else class="badge badge-outline-warning">{{$t('Ordered')}}</span>
                   </div>
+                  
                   <div v-else-if="props.column.field == 'payment_status'">
                     <span
                       v-if="props.row.payment_status == 'paid'"
@@ -104,37 +109,40 @@
                       class="badge badge-outline-primary"
                     >{{$t('partial')}}</span>
                     <span v-else class="badge badge-outline-warning">{{$t('Unpaid')}}</span>
+                    
                   </div>
                   <div v-else-if="props.column.field == 'shipping_status'">
-                  <span
-                    v-if="props.row.shipping_status == 'ordered'"
-                    class="badge badge-outline-warning"
-                  >{{$t('Ordered')}}</span>
+                    <span
+                      v-if="props.row.shipping_status == 'ordered'"
+                      class="badge badge-outline-warning"
+                    >{{$t('Ordered')}}</span>
 
-                  <span
-                    v-else-if="props.row.shipping_status == 'packed'"
-                    class="badge badge-outline-info"
-                  >{{$t('Packed')}}</span>
+                    <span
+                      v-else-if="props.row.shipping_status == 'packed'"
+                      class="badge badge-outline-info"
+                    >{{$t('Packed')}}</span>
 
-                  <span
-                    v-else-if="props.row.shipping_status == 'shipped'"
-                    class="badge badge-outline-secondary"
-                  >{{$t('Shipped')}}</span>
+                    <span
+                      v-else-if="props.row.shipping_status == 'shipped'"
+                      class="badge badge-outline-secondary"
+                    >{{$t('Shipped')}}</span>
 
-                  <span
-                    v-else-if="props.row.shipping_status == 'delivered'"
-                    class="badge badge-outline-success"
-                  >{{$t('Delivered')}}</span>
+                    <span
+                      v-else-if="props.row.shipping_status == 'delivered'"
+                      class="badge badge-outline-success"
+                    >{{$t('Delivered')}}</span>
 
-                  <span v-else-if="props.row.shipping_status == 'cancelled'" class="badge badge-outline-danger">{{$t('Cancelled')}}</span>
-                </div>
-                   <div v-else-if="props.column.field == 'Ref'">
+                    <span v-else-if="props.row.shipping_status == 'cancelled'" class="badge badge-outline-danger">{{$t('Cancelled')}}</span>
+                  </div>
+
+                  <div v-else-if="props.column.field == 'Ref'">
                     <router-link
                       :to="'/app/sales/detail/'+props.row.id"
                     >
                       <span class="ul-btn__text ml-1">{{props.row.Ref}}</span>
                     </router-link>
                   </div>
+        
                 </template>
               </vue-good-table>
             </b-tab>
@@ -305,7 +313,7 @@ export default {
       sales: [],
       quotations: [],
       returns_customer: [],
-
+  
       search_sales:"",
       search_payments:"",
       search_quotations:"",
@@ -317,7 +325,8 @@ export default {
         total_sales: 0,
         total_amount: 0,
         total_paid: 0,
-        due: 0
+        due: 0,
+        shipping: 0
       }
     };
   },
@@ -356,6 +365,14 @@ export default {
         {
           label: this.$t("Total"),
           field: "GrandTotal",
+          tdClass: "text-left",
+          thClass: "text-left",
+          sortable: false
+        },
+        {
+          label: this.$t("Shipping"),
+          field: "shipping",
+          type: "decimal",
           tdClass: "text-left",
           thClass: "text-left",
           sortable: false
@@ -417,7 +434,15 @@ export default {
           thClass: "text-left",
           sortable: false
         },
-         {
+        {
+          label: this.$t("Shipping"),
+          field: "shipping",
+          type: "decimal",
+          tdClass: "text-left",
+          thClass: "text-left",
+          sortable: false
+        },
+        {
           label: this.$t("Status"),
           field: "statut",
           html: true,
@@ -440,6 +465,7 @@ export default {
           tdClass: "text-left",
           thClass: "text-left"
         },
+        
       ];
     },
     columns_returns() {
@@ -489,6 +515,14 @@ export default {
           thClass: "text-left",
           sortable: false
         },
+        {
+          label: this.$t("Shipping"),
+          field: "shipping",
+          type: "decimal",
+          tdClass: "text-left",
+          thClass: "text-left",
+          sortable: false
+        },
          {
           label: this.$t("Status"),
           field: "statut",
@@ -504,7 +538,8 @@ export default {
           tdClass: "text-left",
           thClass: "text-left",
           sortable: false
-        }
+        },
+
       ];
     },
     columns_payments() {
@@ -564,6 +599,7 @@ export default {
         { title: "Total", dataKey: "GrandTotal" },
         { title: "Paid", dataKey: "paid_amount" },
         { title: "Due", dataKey: "due" },
+        { title: "Shipping", dataKey: "shipping" },
         { title: "Status Payment", dataKey: "payment_status" },
         { title: "Shipping Status", dataKey: "shipping_status" }
       ];
@@ -602,6 +638,7 @@ export default {
         { title: "Total", dataKey: "GrandTotal" },
         { title: "Paid", dataKey: "paid_amount" },
         { title: "Due", dataKey: "due" },
+        { title: "Shipping", dataKey: "shipping" },
         { title: "Status", dataKey: "statut" },
         { title: "Status Payment", dataKey: "payment_status" }
       ];
@@ -639,7 +676,6 @@ export default {
       while (formated.length < dec) formated += "0";
       return `${value[0]}.${formated}`;
     },
-
     //------------------------------ Show Reports -------------------------\\
     Get_Reports() {
       let id = this.$route.params.id;
@@ -685,8 +721,10 @@ export default {
             this.$route.params.id
         )
         .then(response => {
+          
           this.sales = response.data.sales;
           this.totalRows_sales = response.data.totalRows;
+          
         })
         .catch(response => {});
     },

@@ -221,7 +221,8 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr v-if="details.length <= 0">
+                              
+                              <tr v-if="details.length <= 0 ">
                                 <td colspan="5">{{$t('NodataAvailable')}}</td>
                               </tr>
                               <tr v-for="(detail, index) in details" :key="index">
@@ -766,6 +767,7 @@
                   <span v-show="pos_settings.show_email">{{$t('Email')}} : {{invoice_pos.setting.email}} <br></span>
                   <span v-show="pos_settings.show_phone">{{$t('Phone')}} : {{invoice_pos.setting.CompanyPhone}} <br></span>
                   <span v-show="pos_settings.show_customer">{{$t('Customer')}} : {{invoice_pos.sale.client_name}} <br></span>
+                
                 </p>
               </div>
 
@@ -783,6 +785,11 @@
                       style="text-align:right;vertical-align:bottom"
                     >{{formatNumber(detail_invoice.total,2)}}</td>
                   </tr>
+                  <!-- Cumali eklendi
+                  <tr style="margin-top:10px" v-show="this.sale.shipping">
+                    <td colspan="3" class="total">{{$t('Shipping')}}</td>
+                    <td style="text-align:right;" class="total">{{invoice_pos.symbol}} {{formatNumber(this.sale.shipping ,2)}}</td>
+                  </tr>-->
 
                   <tr style="margin-top:10px" v-show="pos_settings.show_discount">
                     <td colspan="3" class="total">{{$t('OrderTax')}}</td>
@@ -817,6 +824,7 @@
                       class="total"
                     >{{invoice_pos.symbol}} {{parseFloat(invoice_pos.sale.GrandTotal - invoice_pos.sale.paid_amount).toFixed(2)}}</td>
                   </tr>
+                  
                 </tbody>
               </table>
 
@@ -1764,7 +1772,7 @@ export default {
 
     //-- check Qty of  details order if Null or zero
     verifiedForm() {
-      if (this.details.length <= 0) {
+      if (this.details.length <= 0 && this.sale.shipping == 0 ) {
         this.makeToast(
           "warning",
           this.$t("AddProductToList"),
